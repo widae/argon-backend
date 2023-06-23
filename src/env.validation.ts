@@ -3,6 +3,9 @@ import { IsInt, IsNotEmpty, validateSync } from 'class-validator';
 
 export class EnvVars {
   @IsNotEmpty()
+  NODE_ENV: string;
+
+  @IsNotEmpty()
   MYSQL_HOST: string;
   @IsInt()
   @Transform(({ value }) => Number(value))

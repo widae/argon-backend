@@ -16,7 +16,7 @@ export const databaseProviders = [
         database: configService.get('MYSQL_SCHEMA', { infer: true }),
         entities: [__dirname + '/../**/*.model{.ts,.js}'],
         timezone: 'Z',
-        logging: ['error'],
+        logging: false,
         synchronize: false,
       });
 

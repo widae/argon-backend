@@ -23,3 +23,13 @@ type Query {
   health: Health!
   policies: [Policy!]!
 }
+
+type Mutation {
+  createUser(input: CreateUserInput!): Int!
+}
+
+input CreateUserInput {
+  email: String!
+  password: String!
+  nickname: String!
+}
