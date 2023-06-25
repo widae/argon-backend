@@ -7,5 +7,6 @@ import { PoliciesResolver } from './policies.resolver';
 @Module({
   imports: [DatabaseModule],
   providers: [PoliciesResolver, PoliciesService, ...policiesProviders],
+  exports: [...policiesProviders],
 })
 export class PoliciesModule {}

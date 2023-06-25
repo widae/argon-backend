@@ -4,6 +4,7 @@ import { DATA_SOURCE, POLICIES_REPOSITORY } from '../common/constants';
 
 interface CustomRepository {
   getAll(): Promise<Policy[]>;
+  getByIsRequired(isRequired: boolean): Promise<Policy[]>;
 }
 
 export type PoliciesRepository = CustomRepository & Repository<Policy>;
@@ -16,6 +17,11 @@ export const policiesProviders = [
         {
           async getAll() {
             return await this.createQueryBuilder('policy').getMany();
+          },
+          async getByIsRequired(isRequired: boolean) {
+            return await this.createQueryBuilder('policy')
+              .where({ isRequired })
+              .getMany();
           },
         };
 

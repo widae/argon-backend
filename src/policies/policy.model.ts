@@ -5,6 +5,7 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  DeleteDateColumn,
 } from 'typeorm';
 
 @ObjectType()
@@ -32,4 +33,8 @@ export class Policy {
   @Field()
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @Field(() => Date, { nullable: true })
+  @DeleteDateColumn()
+  deletedAt: Date | null;
 }

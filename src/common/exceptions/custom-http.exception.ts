@@ -6,6 +6,7 @@ export type ErrCode =
   | 'E_403_000'
   | 'E_404_000'
   | 'E_409_001'
+  | 'E_422_001'
   | 'E_500_000';
 
 interface CodeAndMsg {
@@ -24,6 +25,10 @@ const extras: Record<ErrCode, CodeAndMsg> = {
   E_409_001: {
     statusCode: 409,
     errMessage: '이메일 주소가 중복됩니다.',
+  },
+  E_422_001: {
+    statusCode: 422,
+    errMessage: '필수 동의 사항이 있습니다.',
   },
   E_500_000: {
     statusCode: 500,

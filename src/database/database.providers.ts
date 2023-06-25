@@ -2,6 +2,7 @@ import { ConfigService } from '@nestjs/config';
 import { DATA_SOURCE } from '../common/constants';
 import { DataSource } from 'typeorm';
 import { EnvVars } from '../env.validation';
+import { addTransactionalDataSource } from 'typeorm-transactional';
 
 export const databaseProviders = [
   {
@@ -19,6 +20,8 @@ export const databaseProviders = [
         logging: false,
         synchronize: false,
       });
+
+      addTransactionalDataSource(dataSource);
 
       return dataSource.initialize();
     },
