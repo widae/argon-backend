@@ -12,6 +12,7 @@ import { ValidationPipe } from './common/pipes/validation.pipe';
 import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
 import { WinstonModule } from 'nest-winston';
 import { format, transports } from 'winston';
+import { VerificationsModule } from './verifications/verifications.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { format, transports } from 'winston';
     HealthModule,
     UsersModule,
     PoliciesModule,
+    VerificationsModule,
   ],
   providers: [
     { provide: APP_PIPE, useClass: ValidationPipe },

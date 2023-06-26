@@ -4,9 +4,10 @@ import { usersProviders } from './users.providers';
 import { UsersService } from './users.service';
 import { UsersResolver } from './users.resolver';
 import { AgreementsModule } from '../agreements/agreements.module';
+import { VerificationsModule } from '../verifications/verifications.module';
 
 @Module({
-  imports: [DatabaseModule, AgreementsModule],
+  imports: [DatabaseModule, AgreementsModule, VerificationsModule],
   providers: [UsersResolver, UsersService, ...usersProviders],
 })
 export class UsersModule {}

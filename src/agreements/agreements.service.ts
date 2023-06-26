@@ -3,11 +3,11 @@ import {
   AGREEMENTS_REPOSITORY,
   POLICIES_REPOSITORY,
 } from '../common/constants';
-import { ResultSetHeader } from 'mysql2';
 import { AgreementsRepository } from './agreements.providers';
 import { Propagation, Transactional } from 'typeorm-transactional';
 import { PoliciesRepository } from '../policies/policies.providers';
 import { CustomHttpException } from '../common/exceptions/custom-http.exception';
+import { InsertResultRaw } from '../common/interfaces/insert-result-raw.interface';
 
 @Injectable()
 export class AgreementsService {
@@ -32,7 +32,7 @@ export class AgreementsService {
       }
     }
 
-    const { raw }: { raw: ResultSetHeader } =
+    const { raw }: { raw: InsertResultRaw } =
       await this.agreementsRepository.insert(
         policyIds.map((policyId) => {
           return { userId, policyId };

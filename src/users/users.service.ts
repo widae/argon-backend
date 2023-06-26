@@ -1,12 +1,13 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { USERS_REPOSITORY } from '../common/constants';
 import { UsersRepository } from './users.providers';
-import { ResultSetHeader } from 'mysql2';
 import * as bcrypt from 'bcrypt';
 import { CustomHttpException } from '../common/exceptions/custom-http.exception';
 import { Propagation, Transactional } from 'typeorm-transactional';
 import { AgreementsService } from '../agreements/agreements.service';
 import { SignUpInput } from './dto/sign-up.input';
+import { InsertResultRaw } from '../common/interfaces/insert-result-raw.interface';
+import { VerificationsService } from '../verifications/verifications.service';
 
 interface CreateUserParams {
   email: string;
@@ -23,6 +24,7 @@ interface CreateUserResult {
 export class UsersService {
   constructor(
     private readonly agreementsService: AgreementsService,
+    private readonly verificationsService: VerificationsService,
     @Inject(USERS_REPOSITORY)
     private readonly usersRepository: UsersRepository,
   ) {}
@@ -33,7 +35,7 @@ export class UsersService {
     const hash = await bcrypt.hash(params.password, salt);
 
     try {
-      const { raw }: { raw: ResultSetHeader } =
+      const { raw }: { raw: InsertResultRaw } =
         await this.usersRepository.insert({
           email: params.email,
           password: hash,
@@ -54,6 +56,11 @@ export class UsersService {
 
   @Transactional({ propagation: Propagation.REQUIRES_NEW })
   async signUp(input: SignUpInput) {
+    await this.verificationsService.verify(
+      input.verificationId,
+      input.verificationCode,
+    );
+
     const { userId, affected } = await this.createUser({
       email: input.email,
       password: input.password,

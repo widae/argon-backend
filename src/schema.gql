@@ -20,6 +20,20 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
+type Verification {
+  id: String!
+  type: VerificationType!
+  key: String!
+  isVerified: Boolean!
+  expireAt: DateTime!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+enum VerificationType {
+  EMAIL
+}
+
 type Query {
   health: Health!
   policies: [Policy!]!
@@ -27,6 +41,7 @@ type Query {
 
 type Mutation {
   signUp(input: SignUpInput!): Int!
+  createEmailVerification(input: CreateEmailVerificationInput!): Verification!
 }
 
 input SignUpInput {
@@ -34,4 +49,10 @@ input SignUpInput {
   password: String!
   nickname: String!
   policyIds: [String!]!
+  verificationId: String!
+  verificationCode: String!
+}
+
+input CreateEmailVerificationInput {
+  email: String!
 }

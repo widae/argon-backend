@@ -16,6 +16,18 @@ export class EnvVars {
   MYSQL_PASSWORD: string;
   @IsNotEmpty()
   MYSQL_SCHEMA: string;
+
+  @IsNotEmpty()
+  AWS_ACCESS_KEY_ID: string;
+  @IsNotEmpty()
+  AWS_SECRET_ACCESS_KEY: string;
+  @IsNotEmpty()
+  AWS_REGION: string;
+
+  @IsNotEmpty()
+  EMAIL_SENDER_ADDR: string;
+  @IsNotEmpty()
+  EMAIL_VERIFICATION_TEMPLATE_ID: string;
 }
 
 export function validate(config: Record<string, unknown>) {
