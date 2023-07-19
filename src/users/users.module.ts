@@ -9,5 +9,6 @@ import { VerificationsModule } from '../verifications/verifications.module';
 @Module({
   imports: [DatabaseModule, AgreementsModule, VerificationsModule],
   providers: [UsersResolver, UsersService, ...usersProviders],
+  exports: [...usersProviders],
 })
 export class UsersModule {}

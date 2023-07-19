@@ -35,7 +35,7 @@ export class Verification {
 
   @Field()
   @Column({ precision: 6 })
-  expireAt: Date;
+  expiresAt: Date;
 
   @Field()
   @CreateDateColumn()

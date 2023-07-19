@@ -29,8 +29,8 @@ export class VerificationsService {
   async createEmailVerification(email: string) {
     const code = genNumCode(6);
     const hash = await bcrypt.hash(code, 10);
-    const expireAt = new Date();
-    expireAt.setMinutes(expireAt.getMinutes() + 3);
+    const expiresAt = new Date();
+    expiresAt.setMinutes(expiresAt.getMinutes() + 3);
 
     const { raw }: { raw: InsertResultRaw } =
       await this.verificationsRepository.insert({
@@ -38,7 +38,7 @@ export class VerificationsService {
         key: email,
         code: hash,
         isVerified: false,
-        expireAt,
+        expiresAt,
       });
 
     const verification = await this.verificationsRepository.getByIdOrFail(
@@ -71,9 +71,9 @@ export class VerificationsService {
     }
 
     const curTime = new Date().getTime();
-    const expireTime = verification.expireAt.getTime();
+    const expTime = verification.expiresAt.getTime();
 
-    if (expireTime < curTime) {
+    if (expTime < curTime) {
       throw new CustomHttpException('E_422_002');
     }
 

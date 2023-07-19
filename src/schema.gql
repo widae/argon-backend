@@ -25,13 +25,23 @@ type Verification {
   type: VerificationType!
   key: String!
   isVerified: Boolean!
-  expireAt: DateTime!
+  expiresAt: DateTime!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
 
 enum VerificationType {
   EMAIL
+}
+
+type LoginResult {
+  accessToken: String!
+  refreshToken: String!
+}
+
+type RefreshResult {
+  accessToken: String!
+  refreshToken: String
 }
 
 type Query {
@@ -42,6 +52,8 @@ type Query {
 type Mutation {
   signUp(input: SignUpInput!): Int!
   createEmailVerification(input: CreateEmailVerificationInput!): Verification!
+  logIn(input: LoginInput!): LoginResult!
+  refresh: RefreshResult!
 }
 
 input SignUpInput {
@@ -55,4 +67,9 @@ input SignUpInput {
 
 input CreateEmailVerificationInput {
   email: String!
+}
+
+input LoginInput {
+  email: String!
+  password: String!
 }

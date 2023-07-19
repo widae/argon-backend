@@ -9,13 +9,36 @@ export class EnvVars {
   MYSQL_HOST: string;
   @IsInt()
   @Transform(({ value }) => Number(value))
-  MYSQL_PORT: string;
+  MYSQL_PORT: number;
   @IsNotEmpty()
   MYSQL_USER: string;
   @IsNotEmpty()
   MYSQL_PASSWORD: string;
   @IsNotEmpty()
   MYSQL_SCHEMA: string;
+
+  @IsNotEmpty()
+  REDIS_HOST: string;
+  @IsInt()
+  @Transform(({ value }) => Number(value))
+  REDIS_PORT: number;
+  @IsNotEmpty()
+  REDIS_PASSWORD: string;
+
+  @IsNotEmpty()
+  ACCESS_TOKEN_SECRET: string;
+  @IsNotEmpty()
+  REFRESH_TOKEN_SECRET: string;
+
+  @IsInt()
+  @Transform(({ value }) => Number(value))
+  ACCESS_TOKEN_EXPIRES_IN: number;
+  @IsInt()
+  @Transform(({ value }) => Number(value))
+  REFRESH_TOKEN_EXPIRES_IN: number;
+  @IsInt()
+  @Transform(({ value }) => Number(value))
+  REFRESH_TOKEN_RENEWAL_SECONDS: number;
 
   @IsNotEmpty()
   AWS_ACCESS_KEY_ID: string;

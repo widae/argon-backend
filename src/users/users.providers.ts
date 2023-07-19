@@ -8,6 +8,7 @@ interface CustomRepository {
     values: QueryDeepPartialEntity<User> | QueryDeepPartialEntity<User>[],
     updateEntity?: boolean,
   ): Promise<InsertResult>;
+  getByEmail(email: string): Promise<User | null>;
 }
 
 export type UsersRepository = CustomRepository & Repository<User>;
@@ -26,6 +27,11 @@ export const usersProviders = [
             .values(values)
             .updateEntity(updateEntity)
             .execute();
+        },
+        async getByEmail(email: string) {
+          return await this.createQueryBuilder('user')
+            .where({ email })
+            .getOne();
         },
       };
 
