@@ -34,6 +34,16 @@ enum VerificationType {
   EMAIL
 }
 
+type LoginResult {
+  accessToken: String!
+  refreshToken: String!
+}
+
+type RefreshResult {
+  accessToken: String!
+  refreshToken: String
+}
+
 type School {
   id: String!
   name: String!
