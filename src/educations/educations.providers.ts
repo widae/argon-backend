@@ -18,6 +18,10 @@ interface CustomRepository {
     updateEntity?: boolean,
   ): Promise<InsertResult>;
   getAllByUserId(id: string): Promise<Education[]>;
+  getByUserIdAndEducationId(
+    userId: string,
+    educationId: string,
+  ): Promise<Education | null>;
   updateTheOrderFromBelow(
     userId: string,
     orders: Orders,
@@ -58,6 +62,11 @@ export const educationsProviders = [
             .where({ userId })
             .orderBy('education.order')
             .getMany();
+        },
+        async getByUserIdAndEducationId(userId: string, id: string) {
+          return await this.createQueryBuilder('education')
+            .where({ userId, id })
+            .getOne();
         },
         async updateTheOrderFromBelow(userId: string, orders: Orders) {
           return await this.createQueryBuilder('education')

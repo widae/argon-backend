@@ -55,7 +55,9 @@ export class EducationsService {
     return result.affected;
   }
 
-  async update(dto: UpdateEducationInput) {
+  async update(userId: string, dto: UpdateEducationInput) {
+    await this.getByUserIdAndEducationId(userId, dto.educationId);
+
     const education = new Education();
     dto.description !== undefined && (education.description = dto.description);
     dto.major !== undefined && (education.major = dto.major);
@@ -72,12 +74,27 @@ export class EducationsService {
     return result.affected;
   }
 
-  async delete(educationId: string) {
+  async delete(userId: string, educationId: string) {
+    await this.getByUserIdAndEducationId(userId, educationId);
+
     const result = await this.educationsRepository.delete(educationId);
     return result.affected;
   }
 
   async getAllByUserId(userId: string) {
     return await this.educationsRepository.getAllByUserId(userId);
+  }
+
+  async getByUserIdAndEducationId(userId: string, educationId: string) {
+    const education = await this.educationsRepository.getByUserIdAndEducationId(
+      userId,
+      educationId,
+    );
+
+    if (!education) {
+      throw new Error('접근 권한이 없습니다.');
+    }
+
+    return education;
   }
 }
