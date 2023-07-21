@@ -6,8 +6,6 @@ import { UpdateEducationInput } from './dto/update-education.input';
 import { DeleteEducationInput } from './dto/delete-education.input';
 import { GqlAuthGuard } from '../auth/guards/gql-auth.guard';
 import { UseGuards } from '@nestjs/common';
-import { CurRefreshTokenPayload } from '../auth/decorators/cur-refresh-token-payload.decorator';
-import { JwtRefreshTokenPayload } from '../auth/interfaces/jwt-refresh-token-payload.interface';
 import { CurAccessTokenPayload } from '../auth/decorators/cur-access-token-payload.decorator';
 import { JwtAccessTokenPayload } from '../auth/interfaces/jwt-access-token-payload.interface';
 
