@@ -13,6 +13,8 @@ import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
 import { WinstonModule } from 'nest-winston';
 import { format, transports } from 'winston';
 import { VerificationsModule } from './verifications/verifications.module';
+import { SchoolsModule } from './schools/schools.module';
+import { EducationsModule } from './educations/educations.module';
 import { AuthModule } from './auth/auth.module';
 import { RedisModule, RedisModuleOptions } from '@liaoliaots/nestjs-redis';
 import { SchoolsModule } from './schools/schools.module';
