@@ -34,6 +34,24 @@ enum VerificationType {
   EMAIL
 }
 
+type School {
+  id: String!
+  name: String!
+  type: String!
+  createdAt: DateTime!
+}
+
+type Education {
+  id: String!
+  major: String
+  description: String
+  order: Float!
+  startDt: DateTime
+  endDt: DateTime
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
 type LoginResult {
   accessToken: String!
   refreshToken: String!
@@ -47,6 +65,12 @@ type RefreshResult {
 type Query {
   health: Health!
   policies: [Policy!]!
+  searchForSchools(input: SearchSchoolsInput!): [School!]!
+  getAllByUserId: [Education!]!
+}
+
+input SearchSchoolsInput {
+  keyword: String!
 }
 
 type Mutation {
@@ -54,6 +78,9 @@ type Mutation {
   createEmailVerification(input: CreateEmailVerificationInput!): Verification!
   logIn(input: LoginInput!): LoginResult!
   refresh: RefreshResult!
+  updateTheOrder(input: UpdateEducationTheOrderInput!): Int!
+  updateEducation(input: UpdateEducationInput!): Int!
+  deleteEducation(input: DeleteEducationInput!): Int!
 }
 
 input SignUpInput {
@@ -72,4 +99,23 @@ input CreateEmailVerificationInput {
 input LoginInput {
   email: String!
   password: String!
+}
+
+input UpdateEducationTheOrderInput {
+  educationId: String!
+  order: Float!
+}
+
+input UpdateEducationInput {
+  educationId: String!
+  major: String
+  description: String
+  startDt: DateTime
+  endDt: DateTime
+  schoolId: String
+  schoolName: String
+}
+
+input DeleteEducationInput {
+  educationId: String!
 }

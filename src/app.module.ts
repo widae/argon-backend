@@ -15,6 +15,8 @@ import { format, transports } from 'winston';
 import { VerificationsModule } from './verifications/verifications.module';
 import { AuthModule } from './auth/auth.module';
 import { RedisModule, RedisModuleOptions } from '@liaoliaots/nestjs-redis';
+import { SchoolsModule } from './schools/schools.module';
+import { EducationsModule } from './educations/educations.module';
 
 @Module({
   imports: [
@@ -54,6 +56,8 @@ import { RedisModule, RedisModuleOptions } from '@liaoliaots/nestjs-redis';
     UsersModule,
     PoliciesModule,
     VerificationsModule,
+    SchoolsModule,
+    EducationsModule,
     AuthModule,
   ],
   providers: [
