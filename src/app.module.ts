@@ -15,6 +15,7 @@ import { format, transports } from 'winston';
 import { VerificationsModule } from './verifications/verifications.module';
 import { AuthModule } from './auth/auth.module';
 import { RedisModule, RedisModuleOptions } from '@liaoliaots/nestjs-redis';
+import { CompaniesModule } from './companies/companies.module';
 
 @Module({
   imports: [
@@ -55,6 +56,7 @@ import { RedisModule, RedisModuleOptions } from '@liaoliaots/nestjs-redis';
     PoliciesModule,
     VerificationsModule,
     AuthModule,
+    CompaniesModule,
   ],
   providers: [
     { provide: APP_PIPE, useClass: ValidationPipe },

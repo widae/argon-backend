@@ -44,9 +44,18 @@ type RefreshResult {
   refreshToken: String
 }
 
+type Company {
+  id: String!
+  name: String!
+  address: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
 type Query {
   health: Health!
   policies: [Policy!]!
+  companiesWithNameContaining(name: String!, take: Int! = 10, skip: Int! = 0): [Company!]!
 }
 
 type Mutation {
