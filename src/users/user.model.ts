@@ -7,32 +7,32 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-@ObjectType()
+@ObjectType({ description: `사용자` })
 @Entity()
 export class User {
-  @Field()
+  @Field({ description: `사용자 ID` })
   @PrimaryGeneratedColumn({
     type: 'bigint',
     unsigned: true,
   })
   id: string;
 
-  @Field()
+  @Field({ description: `이메일 주소` })
   @Column({ unique: true })
   email: string;
 
   @Column()
   password: string;
 
-  @Field()
+  @Field({ description: `사용자 닉네임` })
   @Column()
   nickname: string;
 
-  @Field()
+  @Field({ description: `생성 일시` })
   @CreateDateColumn()
   createdAt: Date;
 
-  @Field()
+  @Field({ description: `수정 일시` })
   @UpdateDateColumn()
   updatedAt: Date;
 }

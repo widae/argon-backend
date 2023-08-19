@@ -8,40 +8,40 @@ import {
 } from 'typeorm';
 import { VerificationType } from './enums/verification-type.enum';
 
-@ObjectType()
+@ObjectType({ description: `인증` })
 @Entity()
 export class Verification {
-  @Field()
+  @Field({ description: `인증 ID` })
   @PrimaryGeneratedColumn({
     type: 'bigint',
     unsigned: true,
   })
   id: string;
 
-  @Field(() => VerificationType)
+  @Field(() => VerificationType, { description: '인증 유형' })
   @Column({ type: 'enum', enum: VerificationType })
   type: VerificationType;
 
-  @Field()
+  @Field({ description: `키 (예: 이메일)` })
   @Column()
   key: string;
 
   @Column()
   code: string;
 
-  @Field()
+  @Field({ description: `인증 여부` })
   @Column()
   isVerified: boolean;
 
-  @Field()
+  @Field({ description: `만료 일시` })
   @Column({ precision: 6 })
   expiresAt: Date;
 
-  @Field()
+  @Field({ description: `생성 일시` })
   @CreateDateColumn()
   createdAt: Date;
 
-  @Field()
+  @Field({ description: `수정 일시` })
   @UpdateDateColumn()
   updatedAt: Date;
 }

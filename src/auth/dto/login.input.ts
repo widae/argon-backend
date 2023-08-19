@@ -1,12 +1,12 @@
 import { InputType, Field } from '@nestjs/graphql';
 import { IsEmail } from 'class-validator';
 
-@InputType()
+@InputType({ description: `로그인 입력` })
 export class LoginInput {
   @IsEmail()
-  @Field()
+  @Field({ description: `이메일 주소` })
   email: string;
 
-  @Field()
+  @Field({ description: `비밀번호` })
   password: string;
 }

@@ -7,29 +7,29 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-@ObjectType()
+@ObjectType({ description: `회사` })
 @Entity()
 export class Company {
-  @Field()
+  @Field({ description: `회사 ID` })
   @PrimaryGeneratedColumn({
     type: 'bigint',
     unsigned: true,
   })
   id: string;
 
-  @Field()
+  @Field({ description: `회사 이름` })
   @Column()
   name: string;
 
-  @Field()
+  @Field({ description: `회사 주소` })
   @Column()
   address: string;
 
-  @Field()
+  @Field({ description: `생성 일시` })
   @CreateDateColumn()
   createdAt: Date;
 
-  @Field()
+  @Field({ description: `수정 일시` })
   @UpdateDateColumn()
   updatedAt: Date;
 }

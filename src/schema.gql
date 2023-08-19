@@ -2,16 +2,30 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+"""헬스 체크 결과"""
 type Health {
+  """(전체) 상태"""
   status: String!
 }
 
+"""정책"""
 type Policy {
+  """정책 ID"""
   id: String!
+
+  """정책명"""
   name: String!
+
+  """동의 필요 여부"""
   isRequired: Boolean!
+
+  """생성 일시"""
   createdAt: DateTime!
+
+  """수정 일시"""
   updatedAt: DateTime!
+
+  """삭제 일시"""
   deletedAt: DateTime
 }
 
@@ -20,42 +34,85 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
+"""인증"""
 type Verification {
+  """인증 ID"""
   id: String!
+
+  """인증 유형"""
   type: VerificationType!
+
+  """키 (예: 이메일)"""
   key: String!
+
+  """인증 여부"""
   isVerified: Boolean!
+
+  """만료 일시"""
   expiresAt: DateTime!
+
+  """생성 일시"""
   createdAt: DateTime!
+
+  """수정 일시"""
   updatedAt: DateTime!
 }
 
+"""인증 유형"""
 enum VerificationType {
+  """이메일 인증"""
   EMAIL
 }
 
+"""로그인 결과"""
 type LoginResult {
+  """엑세스 토큰"""
   accessToken: String!
+
+  """리프레시 토큰"""
   refreshToken: String!
 }
 
+"""리프레시 결과"""
 type RefreshResult {
+  """엑세스 토큰"""
   accessToken: String!
+
+  """리프레시 토큰"""
   refreshToken: String
 }
 
+"""회사"""
 type Company {
+  """회사 ID"""
   id: String!
+
+  """회사 이름"""
   name: String!
+
+  """회사 주소"""
   address: String!
+
+  """생성 일시"""
   createdAt: DateTime!
+
+  """수정 일시"""
   updatedAt: DateTime!
 }
 
 type Query {
   health: Health!
   policies: [Policy!]!
-  companiesWithNameContaining(name: String!, take: Int! = 10, skip: Int! = 0): [Company!]!
+  companiesWithNameContaining(
+    """회사명 (또는 그 일부)"""
+    name: String!
+
+    """최대 개체 수"""
+    take: Int! = 10
+
+    """스킵 개체 수"""
+    skip: Int! = 0
+  ): [Company!]!
 }
 
 type Mutation {
@@ -65,20 +122,38 @@ type Mutation {
   refresh: RefreshResult!
 }
 
+"""회원가입 관련 입력"""
 input SignUpInput {
+  """이메일 주소"""
   email: String!
+
+  """비밀번호"""
   password: String!
+
+  """사용자 닉네임"""
   nickname: String!
+
+  """동의하는 정책 ID 리스트"""
   policyIds: [String!]!
+
+  """인증 ID"""
   verificationId: String!
+
+  """인증 코드"""
   verificationCode: String!
 }
 
+"""이메일 인증 생성을 위한 입력"""
 input CreateEmailVerificationInput {
+  """이메일 주소"""
   email: String!
 }
 
+"""로그인 입력"""
 input LoginInput {
+  """이메일 주소"""
   email: String!
+
+  """비밀번호"""
   password: String!
 }
