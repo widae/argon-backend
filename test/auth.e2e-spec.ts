@@ -6,7 +6,7 @@ import { DATA_SOURCE } from '../src/common/constants';
 import { DataSource } from 'typeorm';
 import { initializeTransactionalContext } from 'typeorm-transactional';
 
-describe('Health (e2e)', () => {
+describe('Auth (e2e)', () => {
   const gql = '/graphql';
   let app: INestApplication;
   let ds: DataSource;
@@ -24,30 +24,61 @@ describe('Health (e2e)', () => {
     ds = moduleRef.get<string, DataSource>(DATA_SOURCE);
   });
 
-  describe('health', () => {
+  describe('logIn', () => {
     it('#0', () => {
       return request(app.getHttpServer())
         .post(gql)
         .send({
-          query: `{
-            health {
-              status
+          query: `
+            mutation {
+              logIn(input: { email: "${process.env.TEST_USER_EMAIL}", password: "${process.env.TEST_USER_PASSWORD}" }) {
+                accessToken
+                refreshToken
+              }
             }
-          }`,
+          `,
         })
         .expect(200)
         .expect((res) => {
-          const expected = { status: 'ok' };
-
-          let actual = {};
+          let actual = null;
 
           const { data } = res.body;
 
           if (data != null) {
-            actual = data.health;
+            actual = data.logIn;
           }
 
-          expect(actual).toMatchObject(expected);
+          expect(actual).toBeObject();
+        });
+    });
+  });
+
+  describe('refresh', () => {
+    it('#0', () => {
+      return request(app.getHttpServer())
+        .post(gql)
+        .set('Authorization', `Bearer ${process.env.TEST_REFRESH_TOKEN}`)
+        .send({
+          query: `
+            mutation {
+              refresh {
+                accessToken
+                refreshToken
+              }
+            }
+          `,
+        })
+        .expect(200)
+        .expect((res) => {
+          let actual = null;
+
+          const { data } = res.body;
+
+          if (data != null) {
+            actual = data.refresh;
+          }
+
+          expect(actual).toBeObject();
         });
     });
   });

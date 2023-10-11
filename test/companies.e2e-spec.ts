@@ -6,7 +6,7 @@ import { DATA_SOURCE } from '../src/common/constants';
 import { DataSource } from 'typeorm';
 import { initializeTransactionalContext } from 'typeorm-transactional';
 
-describe('Health (e2e)', () => {
+describe('Companies (e2e)', () => {
   const gql = '/graphql';
   let app: INestApplication;
   let ds: DataSource;
@@ -24,30 +24,28 @@ describe('Health (e2e)', () => {
     ds = moduleRef.get<string, DataSource>(DATA_SOURCE);
   });
 
-  describe('health', () => {
+  describe('companiesWithNameContaining', () => {
     it('#0', () => {
       return request(app.getHttpServer())
         .post(gql)
         .send({
           query: `{
-            health {
-              status
+            companiesWithNameContaining(name: "위") {
+              id
             }
           }`,
         })
         .expect(200)
         .expect((res) => {
-          const expected = { status: 'ok' };
-
-          let actual = {};
+          let actual = null;
 
           const { data } = res.body;
 
           if (data != null) {
-            actual = data.health;
+            actual = data.companiesWithNameContaining;
           }
 
-          expect(actual).toMatchObject(expected);
+          expect(actual).toBeArray();
         });
     });
   });

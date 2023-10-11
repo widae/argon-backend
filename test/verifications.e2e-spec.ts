@@ -6,7 +6,7 @@ import { DATA_SOURCE } from '../src/common/constants';
 import { DataSource } from 'typeorm';
 import { initializeTransactionalContext } from 'typeorm-transactional';
 
-describe('Health (e2e)', () => {
+describe('Verifications (e2e)', () => {
   const gql = '/graphql';
   let app: INestApplication;
   let ds: DataSource;
@@ -24,30 +24,30 @@ describe('Health (e2e)', () => {
     ds = moduleRef.get<string, DataSource>(DATA_SOURCE);
   });
 
-  describe('health', () => {
+  describe('createEmailVerification', () => {
     it('#0', () => {
       return request(app.getHttpServer())
         .post(gql)
         .send({
-          query: `{
-            health {
-              status
+          query: `
+            mutation {
+              createEmailVerification(input: { email: "${process.env.TEST_USER_EMAIL}" }) {
+                id
+              }
             }
-          }`,
+          `,
         })
         .expect(200)
         .expect((res) => {
-          const expected = { status: 'ok' };
-
-          let actual = {};
+          let actual = null;
 
           const { data } = res.body;
 
           if (data != null) {
-            actual = data.health;
+            actual = data.createEmailVerification;
           }
 
-          expect(actual).toMatchObject(expected);
+          expect(actual).toBeObject();
         });
     });
   });
