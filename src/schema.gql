@@ -34,6 +34,30 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
+"""사용자"""
+type User {
+  """사용자 ID"""
+  id: String!
+
+  """이메일 주소"""
+  email: String!
+
+  """사용자 닉네임"""
+  nickname: String!
+
+  """사용자의 구독 수"""
+  numSubs: Int!
+
+  """사용자의 구독자 수"""
+  numSubscribers: Int!
+
+  """생성 일시"""
+  createdAt: DateTime!
+
+  """수정 일시"""
+  updatedAt: DateTime!
+}
+
 """인증"""
 type Verification {
   """인증 ID"""
@@ -100,6 +124,33 @@ type Company {
   updatedAt: DateTime!
 }
 
+"""구독"""
+type Sub {
+  """구독 ID"""
+  id: String!
+
+  """구독자 ID"""
+  subscriberId: String!
+
+  """구독자"""
+  subscriber: User
+
+  """출판인 ID"""
+  publisherId: String!
+
+  """출판인"""
+  publisher: User
+
+  """출판인의 구독 여부"""
+  isAlsoSubscribing: Boolean!
+
+  """생성 일시"""
+  createdAt: DateTime!
+
+  """수정 일시"""
+  updatedAt: DateTime!
+}
+
 type Query {
   health: Health!
   policies: [Policy!]!
@@ -113,6 +164,26 @@ type Query {
     """스킵 개체 수"""
     skip: Int! = 0
   ): [Company!]!
+  subsWithSubscriberId(
+    """구독자 ID"""
+    subscriberId: String!
+
+    """최대 개체 수"""
+    take: Int! = 10
+
+    """스킵 개체 수"""
+    skip: Int! = 0
+  ): [Sub!]!
+  subsWithPublisherId(
+    """출판인 ID"""
+    publisherId: String!
+
+    """최대 개체 수"""
+    take: Int! = 10
+
+    """스킵 개체 수"""
+    skip: Int! = 0
+  ): [Sub!]!
 }
 
 type Mutation {
@@ -120,6 +191,8 @@ type Mutation {
   createEmailVerification(input: CreateEmailVerificationInput!): Verification!
   logIn(input: LoginInput!): LoginResult!
   refresh: RefreshResult!
+  createSub(input: CreateSubInput!): Int!
+  deleteSub(input: DeleteSubInput!): Int!
 }
 
 """회원가입 관련 입력"""
@@ -156,4 +229,16 @@ input LoginInput {
 
   """비밀번호"""
   password: String!
+}
+
+"""구독 생성 관련 입력"""
+input CreateSubInput {
+  """출판인 ID"""
+  publisherId: String!
+}
+
+"""구독 삭제 관련 입력"""
+input DeleteSubInput {
+  """출판인 ID"""
+  publisherId: String!
 }

@@ -5,9 +5,13 @@ export type ErrCode =
   | 'E_401_000'
   | 'E_403_000'
   | 'E_404_000'
+  | 'E_404_001'
+  | 'E_404_002'
   | 'E_409_001'
+  | 'E_409_002'
   | 'E_422_001'
   | 'E_422_002'
+  | 'E_422_003'
   | 'E_500_000';
 
 interface CodeAndMsg {
@@ -23,9 +27,15 @@ const extras: Record<ErrCode, CodeAndMsg> = {
   },
   E_403_000: { statusCode: 403, errMessage: '권한이 없습니다.' },
   E_404_000: { statusCode: 404, errMessage: '요청 자원을 찾을 수 없습니다.' },
+  E_404_001: { statusCode: 404, errMessage: '구독자를 찾을 수 없습니다.' },
+  E_404_002: { statusCode: 404, errMessage: '출판인을 찾을 수 없습니다.' },
   E_409_001: {
     statusCode: 409,
-    errMessage: '이메일 주소가 중복됩니다.',
+    errMessage: '사용자가 중복됩니다.',
+  },
+  E_409_002: {
+    statusCode: 409,
+    errMessage: '구독이 중복됩니다.',
   },
   E_422_001: {
     statusCode: 422,
@@ -34,6 +44,10 @@ const extras: Record<ErrCode, CodeAndMsg> = {
   E_422_002: {
     statusCode: 422,
     errMessage: '이메일 인증을 실패했습니다.',
+  },
+  E_422_003: {
+    statusCode: 422,
+    errMessage: '자기 자신을 구독할 수 없습니다.',
   },
   E_500_000: {
     statusCode: 500,

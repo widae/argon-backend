@@ -1,4 +1,4 @@
-import { ObjectType, Field } from '@nestjs/graphql';
+import { ObjectType, Field, Int } from '@nestjs/graphql';
 import {
   Entity,
   Column,
@@ -27,6 +27,14 @@ export class User {
   @Field({ description: `사용자 닉네임` })
   @Column()
   nickname: string;
+
+  @Field(() => Int, { description: `사용자의 구독 수` })
+  @Column({ default: 0 })
+  numSubs: number;
+
+  @Field(() => Int, { description: `사용자의 구독자 수` })
+  @Column({ default: 0 })
+  numSubscribers: number;
 
   @Field({ description: `생성 일시` })
   @CreateDateColumn()

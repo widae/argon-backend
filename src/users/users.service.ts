@@ -47,7 +47,7 @@ export class UsersService {
         affected: raw.affectedRows,
       };
     } catch (err) {
-      if (err.code === 'ER_DUP_ENTRY') {
+      if (err?.code === 'ER_DUP_ENTRY') {
         throw new CustomHttpException('E_409_001', { cause: err });
       }
       throw err;
@@ -70,5 +70,44 @@ export class UsersService {
     await this.agreementsService.createAgreements(userId, input.policyIds);
 
     return affected;
+  }
+
+  @Transactional({ propagation: Propagation.MANDATORY })
+  async onSubscribeOrCancel(
+    type: 'SUBSCRIBE' | 'CANCEL',
+    subscriberId: string,
+    publisherId: string,
+  ) {
+    /* 구독 수 변경 */
+    const subscriber = await this.usersRepository.getByIdForUpdate(
+      subscriberId,
+    );
+
+    if (!subscriber) {
+      throw new CustomHttpException('E_404_001');
+    }
+
+    const nextNumSubs =
+      type === 'SUBSCRIBE' ? subscriber.numSubs + 1 : subscriber.numSubs - 1;
+
+    await this.usersRepository.updateById(subscriber.id, {
+      numSubs: nextNumSubs,
+    });
+
+    /* 구독자 수 변경 */
+    const publisher = await this.usersRepository.getByIdForUpdate(publisherId);
+
+    if (!publisher) {
+      throw new CustomHttpException('E_404_002');
+    }
+
+    const nextNumSubscribers =
+      type === 'SUBSCRIBE'
+        ? publisher.numSubscribers + 1
+        : publisher.numSubscribers - 1;
+
+    await this.usersRepository.updateById(publisher.id, {
+      numSubscribers: nextNumSubscribers,
+    });
   }
 }

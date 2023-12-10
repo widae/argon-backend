@@ -16,6 +16,8 @@ import { VerificationsModule } from './verifications/verifications.module';
 import { AuthModule } from './auth/auth.module';
 import { RedisModule, RedisModuleOptions } from '@liaoliaots/nestjs-redis';
 import { CompaniesModule } from './companies/companies.module';
+import { SubsModule } from './subs/subs.module';
+import { DataLoadersInterceptor } from './common/interceptors/data-loaders.interceptor';
 
 @Module({
   imports: [
@@ -57,10 +59,12 @@ import { CompaniesModule } from './companies/companies.module';
     VerificationsModule,
     AuthModule,
     CompaniesModule,
+    SubsModule,
   ],
   providers: [
     { provide: APP_PIPE, useClass: ValidationPipe },
     { provide: APP_INTERCEPTOR, useClass: ClassSerializerInterceptor },
+    { provide: APP_INTERCEPTOR, useClass: DataLoadersInterceptor },
     { provide: APP_FILTER, useClass: AllExceptionsFilter },
   ],
 })
