@@ -19,7 +19,7 @@ export class Verification {
   id: string;
 
   @Field(() => VerificationType, { description: '인증 유형' })
-  @Column({ type: 'enum', enum: VerificationType })
+  @Column({ type: 'varchar' })
   type: VerificationType;
 
   @Field({ description: `키 (예: 이메일)` })

@@ -18,6 +18,7 @@ import { RedisModule, RedisModuleOptions } from '@liaoliaots/nestjs-redis';
 import { CompaniesModule } from './companies/companies.module';
 import { SubsModule } from './subs/subs.module';
 import { DataLoadersInterceptor } from './common/interceptors/data-loaders.interceptor';
+import { GoogleOauth2Module } from './google-oauth2/google-oauth2.module';
 
 @Module({
   imports: [
@@ -60,6 +61,7 @@ import { DataLoadersInterceptor } from './common/interceptors/data-loaders.inter
     AuthModule,
     CompaniesModule,
     SubsModule,
+    GoogleOauth2Module,
   ],
   providers: [
     { provide: APP_PIPE, useClass: ValidationPipe },

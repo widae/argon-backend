@@ -1,7 +1,7 @@
 import { ObjectType, Field } from '@nestjs/graphql';
 
 @ObjectType({ description: `로그인 결과` })
-export class LoginResult {
+export class LogInResult {
   @Field({ description: `엑세스 토큰` })
   accessToken: string;
 

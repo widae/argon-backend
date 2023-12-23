@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { UsersRepository } from '../users/users.providers';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
-import { LoginResult } from './models/login-result.model';
+import { LogInResult } from './models/log-in-result.model';
 import { USERS_REPOSITORY } from '../common/constants';
 import { CustomHttpException } from '../common/exceptions/custom-http.exception';
 import { RedisService } from '@liaoliaots/nestjs-redis';
@@ -13,6 +13,9 @@ import { EnvVars } from '../env.validation';
 import { JwtAccessTokenPayload } from './interfaces/jwt-access-token-payload.interface';
 import { JwtRefreshTokenPayload } from './interfaces/jwt-refresh-token-payload.interface';
 import { RefreshResult } from './models/refresh-result.model';
+import { GoogleOauth2Service } from '../google-oauth2/google-oauth2.service';
+import { jwtDecode } from 'jwt-decode';
+import { GoogleIdTokenPayload } from '../google-oauth2/interfaces/google-id-token-payload.interface';
 
 @Injectable()
 export class AuthService {
@@ -25,10 +28,11 @@ export class AuthService {
 
   constructor(
     private readonly configService: ConfigService<EnvVars, true>,
+    private readonly googleOauth2Service: GoogleOauth2Service,
     private readonly jwtService: JwtService,
-    private readonly redisService: RedisService,
     @Inject(USERS_REPOSITORY)
     private readonly usersRepository: UsersRepository,
+    private readonly redisService: RedisService,
   ) {
     this.accessTokenSecret = this.configService.get('ACCESS_TOKEN_SECRET', {
       infer: true,
@@ -51,32 +55,40 @@ export class AuthService {
     this.redis = this.redisService.getClient();
   }
 
-  async logIn(email: string, password: string): Promise<LoginResult> {
+  async logIn(email: string, password: string): Promise<LogInResult> {
     const user = await this.validate(email, password);
 
     if (!user) {
       throw new CustomHttpException('E_401_000');
     }
 
-    const cmn = uuidv4();
-
-    const accessToken = await this.generateAccessToken(user.id, cmn);
-    const refreshToken = await this.generateRefreshToken(user.id, cmn);
-
-    return { accessToken, refreshToken };
+    return await this.generateTokens(user.id);
   }
 
   async validate(email: string, password: string) {
     const user = await this.usersRepository.getByEmail(email);
 
     if (user) {
-      const isEqual = await bcrypt.compare(password, user.password);
+      const isEqual =
+        user.password == null
+          ? false
+          : await bcrypt.compare(password, user.password);
+
       if (isEqual) {
         return user;
       }
     }
 
     return null;
+  }
+
+  async generateTokens(sub: string): Promise<LogInResult> {
+    const cmn = uuidv4();
+
+    const accessToken = await this.generateAccessToken(sub, cmn);
+    const refreshToken = await this.generateRefreshToken(sub, cmn);
+
+    return { accessToken, refreshToken };
   }
 
   async generateAccessToken(sub: string, cmn: string) {
@@ -130,6 +142,30 @@ export class AuthService {
 
     /* 반환 */
     return token;
+  }
+
+  async logInWithGoogle(code: string): Promise<LogInResult> {
+    const user = await this.validateGoogleCode(code);
+
+    if (!user) {
+      throw new CustomHttpException('E_401_000');
+    }
+
+    return await this.generateTokens(user.id);
+  }
+
+  async validateGoogleCode(code: string) {
+    const { id_token: idToken } = await this.googleOauth2Service.getTokens(
+      code,
+    );
+
+    if (idToken == null) {
+      throw new Error('ID 토큰 값이 문자열이 아닙니다.');
+    }
+
+    const { email } = jwtDecode<GoogleIdTokenPayload>(idToken);
+
+    return await this.usersRepository.getByEmail(email);
   }
 
   async refresh(

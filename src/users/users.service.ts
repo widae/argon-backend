@@ -8,16 +8,36 @@ import { AgreementsService } from '../agreements/agreements.service';
 import { SignUpInput } from './dto/sign-up.input';
 import { InsertResultRaw } from '../common/interfaces/insert-result-raw.interface';
 import { VerificationsService } from '../verifications/verifications.service';
+import { SignUpWithGoogleInput } from './dto/sign-up-with-google.input';
+import { GoogleOauth2Service } from '../google-oauth2/google-oauth2.service';
+import { jwtDecode } from 'jwt-decode';
+import { User } from './user.model';
+import { LogInType } from './enums/log-in-type.enum';
+import { GoogleIdTokenPayload } from '../google-oauth2/interfaces/google-id-token-payload.interface';
 
-interface CreateUserParams {
-  email: string;
-  password: string;
-  nickname: string;
-}
+type CreateUserValues = Pick<
+  User,
+  'email' | 'logInType' | 'password' | 'nickname'
+>;
 
 interface CreateUserResult {
   userId: string;
-  affected: number;
+}
+
+type CreateUserAndAgreementsParams = CreateUserValues & {
+  policyIds: string[];
+};
+
+interface CreateUserAndAgreementsResult {
+  userId: string;
+}
+
+interface SignUpResult {
+  userId: string;
+}
+
+interface SignUpWithGoogleResult {
+  userId: string;
 }
 
 @Injectable()
@@ -25,27 +45,34 @@ export class UsersService {
   constructor(
     private readonly agreementsService: AgreementsService,
     private readonly verificationsService: VerificationsService,
+    private readonly googleOauth2Service: GoogleOauth2Service,
     @Inject(USERS_REPOSITORY)
     private readonly usersRepository: UsersRepository,
   ) {}
 
   @Transactional({ propagation: Propagation.MANDATORY })
-  async createUser(params: CreateUserParams): Promise<CreateUserResult> {
-    const salt = await bcrypt.genSalt();
-    const hash = await bcrypt.hash(params.password, salt);
+  async createUser(values: CreateUserValues): Promise<CreateUserResult> {
+    let hash: string | null = null;
+
+    if (values.logInType === LogInType.EMAIL_PASSWORD) {
+      if (values.password === null) {
+        throw new Error('비밀번호가 문자열이 아닙니다.');
+      }
+
+      const salt = await bcrypt.genSalt();
+      hash = await bcrypt.hash(values.password, salt);
+    }
 
     try {
       const { raw }: { raw: InsertResultRaw } =
         await this.usersRepository.insert({
-          email: params.email,
+          email: values.email,
+          logInType: values.logInType,
           password: hash,
-          nickname: params.nickname,
+          nickname: values.nickname,
         });
 
-      return {
-        userId: raw.insertId + '',
-        affected: raw.affectedRows,
-      };
+      return { userId: raw.insertId.toString() };
     } catch (err) {
       if (err?.code === 'ER_DUP_ENTRY') {
         throw new CustomHttpException('E_409_001', { cause: err });
@@ -54,22 +81,62 @@ export class UsersService {
     }
   }
 
+  @Transactional({ propagation: Propagation.REQUIRED })
+  async createUserAndAgreements(
+    params: CreateUserAndAgreementsParams,
+  ): Promise<CreateUserAndAgreementsResult> {
+    const { userId } = await this.createUser({
+      email: params.email,
+      logInType: params.logInType,
+      password: params.password,
+      nickname: params.nickname,
+    });
+
+    await this.agreementsService.createAgreements(userId, params.policyIds);
+
+    return { userId };
+  }
+
   @Transactional({ propagation: Propagation.REQUIRES_NEW })
-  async signUp(input: SignUpInput) {
+  async signUp(input: SignUpInput): Promise<SignUpResult> {
     await this.verificationsService.verify(
       input.verificationId,
       input.verificationCode,
     );
 
-    const { userId, affected } = await this.createUser({
+    const { userId } = await this.createUserAndAgreements({
       email: input.email,
+      logInType: LogInType.EMAIL_PASSWORD,
       password: input.password,
       nickname: input.nickname,
+      policyIds: input.policyIds,
     });
 
-    await this.agreementsService.createAgreements(userId, input.policyIds);
+    return { userId };
+  }
 
-    return affected;
+  async signUpWithGoogle(
+    input: SignUpWithGoogleInput,
+  ): Promise<SignUpWithGoogleResult> {
+    const { id_token: idToken } = await this.googleOauth2Service.getTokens(
+      input.code,
+    );
+
+    if (idToken == null) {
+      throw new Error('ID 토큰 값이 문자열이 아닙니다.');
+    }
+
+    const { email } = jwtDecode<GoogleIdTokenPayload>(idToken);
+
+    const { userId } = await this.createUserAndAgreements({
+      email,
+      logInType: LogInType.GOOGLE,
+      password: null,
+      nickname: input.nickname,
+      policyIds: input.policyIds,
+    });
+
+    return { userId };
   }
 
   @Transactional({ propagation: Propagation.MANDATORY })

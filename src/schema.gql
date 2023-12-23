@@ -58,6 +58,15 @@ type User {
   updatedAt: DateTime!
 }
 
+"""로그인 결과"""
+type LogInResult {
+  """엑세스 토큰"""
+  accessToken: String!
+
+  """리프레시 토큰"""
+  refreshToken: String!
+}
+
 """인증"""
 type Verification {
   """인증 ID"""
@@ -86,15 +95,6 @@ type Verification {
 enum VerificationType {
   """이메일 인증"""
   EMAIL
-}
-
-"""로그인 결과"""
-type LoginResult {
-  """엑세스 토큰"""
-  accessToken: String!
-
-  """리프레시 토큰"""
-  refreshToken: String!
 }
 
 """리프레시 결과"""
@@ -187,10 +187,13 @@ type Query {
 }
 
 type Mutation {
-  signUp(input: SignUpInput!): Int!
+  signUp(input: SignUpInput!): LogInResult!
+  signUpWithGoogle(input: SignUpWithGoogleInput!): LogInResult!
   createEmailVerification(input: CreateEmailVerificationInput!): Verification!
-  logIn(input: LoginInput!): LoginResult!
+  logIn(input: LogInInput!): LogInResult!
+  logInWithGoogle(input: LogInWithGoogleInput!): LogInResult!
   refresh: RefreshResult!
+  generateGoogleAuthUrl: String!
   createSub(input: CreateSubInput!): Int!
   deleteSub(input: DeleteSubInput!): Int!
 }
@@ -216,19 +219,37 @@ input SignUpInput {
   verificationCode: String!
 }
 
+"""구글로 회원 가입하기 위한 입력"""
+input SignUpWithGoogleInput {
+  """구글 인가 코드"""
+  code: String!
+
+  """사용자 닉네임"""
+  nickname: String!
+
+  """동의하는 정책 ID 리스트"""
+  policyIds: [String!]!
+}
+
 """이메일 인증 생성을 위한 입력"""
 input CreateEmailVerificationInput {
   """이메일 주소"""
   email: String!
 }
 
-"""로그인 입력"""
-input LoginInput {
+"""로그인 관련 입력"""
+input LogInInput {
   """이메일 주소"""
   email: String!
 
   """비밀번호"""
   password: String!
+}
+
+"""구글 로그인 관련 입력"""
+input LogInWithGoogleInput {
+  """구글 인가 코드"""
+  code: String!
 }
 
 """구독 생성 관련 입력"""

@@ -51,6 +51,13 @@ export class EnvVars {
   EMAIL_SENDER_ADDR: string;
   @IsNotEmpty()
   EMAIL_VERIFICATION_TEMPLATE_ID: string;
+
+  @IsNotEmpty()
+  GOOGLE_CLIENT_ID: string;
+  @IsNotEmpty()
+  GOOGLE_CLIENT_SECRET: string;
+  @IsNotEmpty()
+  GOOGLE_REDIRECT_URI: string;
 }
 
 export function validate(config: Record<string, unknown>) {

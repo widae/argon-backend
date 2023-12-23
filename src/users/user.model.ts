@@ -6,6 +6,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { LogInType } from './enums/log-in-type.enum';
 
 @ObjectType({ description: `사용자` })
 @Entity()
@@ -21,8 +22,14 @@ export class User {
   @Column({ unique: true })
   email: string;
 
-  @Column()
-  password: string;
+  @Column({ type: 'varchar' })
+  logInType: LogInType;
+
+  @Column({
+    type: 'varchar',
+    nullable: true,
+  })
+  password: string | null;
 
   @Field({ description: `사용자 닉네임` })
   @Column()
