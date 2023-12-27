@@ -9,10 +9,20 @@ export class GoogleOauth2Service {
   private readonly oauth2Client: OAuth2Client;
 
   constructor(private readonly configService: ConfigService<EnvVars, true>) {
+    const clientId = this.configService.get('GOOGLE_CLIENT_ID', {
+      infer: true,
+    });
+    const clientSecret = this.configService.get('GOOGLE_CLIENT_SECRET', {
+      infer: true,
+    });
+    const redirectUri = this.configService.get('GOOGLE_REDIRECT_URI', {
+      infer: true,
+    });
+
     this.oauth2Client = new google.auth.OAuth2(
-      this.configService.get<string>('GOOGLE_CLIENT_ID'),
-      this.configService.get<string>('GOOGLE_CLIENT_SECRET'),
-      this.configService.get<string>('GOOGLE_REDIRECT_URI'),
+      clientId,
+      clientSecret,
+      redirectUri,
     );
   }
 
