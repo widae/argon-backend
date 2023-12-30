@@ -29,7 +29,14 @@ export class SubsResolver {
   constructor(private readonly subsService: SubsService) {}
 
   @UseGuards(GqlAuthGuard)
-  @Mutation(() => Int)
+  @Mutation(() => Int, {
+    description: `
+      * 기능
+        - 구독 생성
+      * 인증
+        - Bearer (JWT)
+    `,
+  })
   async createSub(
     @CurAccessTokenPayload() payload: JwtAccessTokenPayload,
     @Args('input') input: CreateSubInput,
@@ -41,7 +48,14 @@ export class SubsResolver {
   }
 
   @UseGuards(GqlAuthGuard)
-  @Mutation(() => Int)
+  @Mutation(() => Int, {
+    description: `
+      * 기능
+        - 구독 삭제
+      * 인증
+        - Bearer (JWT)
+    `,
+  })
   async deleteSub(
     @CurAccessTokenPayload() payload: JwtAccessTokenPayload,
     @Args('input') input: DeleteSubInput,
@@ -52,7 +66,14 @@ export class SubsResolver {
     });
   }
 
-  @Query(() => [Sub])
+  @Query(() => [Sub], {
+    description: `
+      * 기능
+        - 구독자 ID가 특정 값인 구독 리스트 읽기
+      * 인증
+        - 없음
+    `,
+  })
   async subsWithSubscriberId(@Args() args: SubsWithSubscriberIdArgs) {
     return await this.subsService.getBySubscriberId(args.subscriberId, {
       take: args.take,
@@ -60,7 +81,14 @@ export class SubsResolver {
     });
   }
 
-  @Query(() => [Sub])
+  @Query(() => [Sub], {
+    description: `
+      * 기능
+        - 출판인 ID가 특정 값인 구독 리스트 읽기
+      * 인증
+        - 없음
+    `,
+  })
   async subsWithPublisherId(@Args() args: SubsWithPublisherIdArgs) {
     return await this.subsService.getByPublisherId(args.publisherId, {
       take: args.take,

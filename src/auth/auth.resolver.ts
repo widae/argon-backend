@@ -13,18 +13,39 @@ import { LogInWithGoogleInput } from './dto/log-in-with-google.input';
 export class AuthResolver {
   constructor(private readonly authService: AuthService) {}
 
-  @Mutation(() => LogInResult)
+  @Mutation(() => LogInResult, {
+    description: `
+      * 기능
+        - 이메일 & 비밀번호 로그인
+      * 인증
+        - 없음
+    `,
+  })
   async logIn(@Args('input') input: LogInInput) {
     return await this.authService.logIn(input.email, input.password);
   }
 
-  @Mutation(() => LogInResult)
+  @Mutation(() => LogInResult, {
+    description: `
+      * 기능
+        - 구글 로그인
+      * 인증
+        - 없음
+    `,
+  })
   async logInWithGoogle(@Args('input') input: LogInWithGoogleInput) {
     return await this.authService.logInWithGoogle(input.code);
   }
 
   @UseGuards(GqlRefreshGuard)
-  @Mutation(() => RefreshResult)
+  @Mutation(() => RefreshResult, {
+    description: `
+      * 기능
+        - 엑세스 및 리스레시 토큰 발급
+      * 인증
+        - Bearer (JWT)
+    `,
+  })
   async refresh(@CurRefreshTokenPayload() payload: JwtRefreshTokenPayload) {
     return await this.authService.refresh(payload);
   }

@@ -13,13 +13,27 @@ export class UsersResolver {
     private readonly authService: AuthService,
   ) {}
 
-  @Mutation(() => LogInResult)
+  @Mutation(() => LogInResult, {
+    description: `
+      * 기능
+        - 이메일 & 비밀번호 회원 가입 (사용자 생성)
+      * 인증
+        - 없음
+    `,
+  })
   async signUp(@Args('input') input: SignUpInput) {
     const { userId } = await this.usersService.signUp(input);
     return await this.authService.generateTokens(userId);
   }
 
-  @Mutation(() => LogInResult)
+  @Mutation(() => LogInResult, {
+    description: `
+      * 기능
+        - 구글 회원 가입 (사용자 생성)
+      * 인증
+        - 없음
+    `,
+  })
   async signUpWithGoogle(@Args('input') input: SignUpWithGoogleInput) {
     const { userId } = await this.usersService.signUpWithGoogle(input);
     return await this.authService.generateTokens(userId);

@@ -6,7 +6,14 @@ import { PoliciesService } from './policies.service';
 export class PoliciesResolver {
   constructor(private readonly policiesService: PoliciesService) {}
 
-  @Query(() => [Policy])
+  @Query(() => [Policy], {
+    description: `
+      * 기능
+        - 모든 정책 읽기
+      * 인증
+        - 없음
+    `,
+  })
   async policies() {
     return await this.policiesService.getAll();
   }

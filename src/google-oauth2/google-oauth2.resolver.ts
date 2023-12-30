@@ -5,7 +5,14 @@ import { GoogleOauth2Service } from './google-oauth2.service';
 export class GoogleOauth2Resolver {
   constructor(private readonly googleOauth2Service: GoogleOauth2Service) {}
 
-  @Mutation(() => String)
+  @Mutation(() => String, {
+    description: `
+      * 기능
+        - 구글 인가 URL 생성
+      * 인증
+        - 없음
+    `,
+  })
   async generateGoogleAuthUrl() {
     return await this.googleOauth2Service.generateAuthUrl();
   }

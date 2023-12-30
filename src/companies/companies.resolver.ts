@@ -7,7 +7,14 @@ import { GetCompaniesByNameContainingArgs } from './dto/get-companies-by-name-co
 export class CompaniesResolver {
   constructor(private readonly companiesService: CompaniesService) {}
 
-  @Query(() => [Company])
+  @Query(() => [Company], {
+    description: `
+      * 기능
+        - 특정 문자열이 포함된 이름의 회사 리스트 읽기
+      * 인증
+        - 없음
+    `,
+  })
   async companiesWithNameContaining(
     @Args() args: GetCompaniesByNameContainingArgs,
   ) {

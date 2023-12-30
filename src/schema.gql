@@ -152,8 +152,13 @@ type Sub {
 }
 
 type Query {
+  "\n      * 기능\n        - 헬스 체크\n      * 인증\n        - 없음\n    "
   health: Health!
+
+  "\n      * 기능\n        - 모든 정책 읽기\n      * 인증\n        - 없음\n    "
   policies: [Policy!]!
+
+  "\n      * 기능\n        - 특정 문자열이 포함된 이름의 회사 리스트 읽기\n      * 인증\n        - 없음\n    "
   companiesWithNameContaining(
     """회사명 (또는 그 일부)"""
     name: String!
@@ -164,6 +169,8 @@ type Query {
     """스킵 개체 수"""
     skip: Int! = 0
   ): [Company!]!
+
+  "\n      * 기능\n        - 구독자 ID가 특정 값인 구독 리스트 읽기\n      * 인증\n        - 없음\n    "
   subsWithSubscriberId(
     """구독자 ID"""
     subscriberId: String!
@@ -174,6 +181,8 @@ type Query {
     """스킵 개체 수"""
     skip: Int! = 0
   ): [Sub!]!
+
+  "\n      * 기능\n        - 출판인 ID가 특정 값인 구독 리스트 읽기\n      * 인증\n        - 없음\n    "
   subsWithPublisherId(
     """출판인 ID"""
     publisherId: String!
@@ -187,14 +196,31 @@ type Query {
 }
 
 type Mutation {
+  "\n      * 기능\n        - 이메일 & 비밀번호 회원 가입 (사용자 생성)\n      * 인증\n        - 없음\n    "
   signUp(input: SignUpInput!): LogInResult!
+
+  "\n      * 기능\n        - 구글 회원 가입 (사용자 생성)\n      * 인증\n        - 없음\n    "
   signUpWithGoogle(input: SignUpWithGoogleInput!): LogInResult!
+
+  "\n      * 기능\n        - 이메일 인증 생성\n      * 인증\n        - 없음\n    "
   createEmailVerification(input: CreateEmailVerificationInput!): Verification!
+
+  "\n      * 기능\n        - 이메일 & 비밀번호 로그인\n      * 인증\n        - 없음\n    "
   logIn(input: LogInInput!): LogInResult!
+
+  "\n      * 기능\n        - 구글 로그인\n      * 인증\n        - 없음\n    "
   logInWithGoogle(input: LogInWithGoogleInput!): LogInResult!
+
+  "\n      * 기능\n        - 엑세스 및 리스레시 토큰 발급\n      * 인증\n        - Bearer (JWT)\n    "
   refresh: RefreshResult!
+
+  "\n      * 기능\n        - 구글 인가 URL 생성\n      * 인증\n        - 없음\n    "
   generateGoogleAuthUrl: String!
+
+  "\n      * 기능\n        - 구독 생성\n      * 인증\n        - Bearer (JWT)\n    "
   createSub(input: CreateSubInput!): Int!
+
+  "\n      * 기능\n        - 구독 삭제\n      * 인증\n        - Bearer (JWT)\n    "
   deleteSub(input: DeleteSubInput!): Int!
 }
 
