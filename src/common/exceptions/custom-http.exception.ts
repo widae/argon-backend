@@ -2,6 +2,9 @@ import { HttpException, HttpExceptionOptions } from '@nestjs/common';
 
 export type ErrCode =
   | 'E_400_000'
+  | 'E_400_001'
+  | 'E_400_002'
+  | 'E_400_003'
   | 'E_401_000'
   | 'E_403_000'
   | 'E_404_000'
@@ -21,6 +24,12 @@ interface CodeAndMsg {
 
 const extras: Record<ErrCode, CodeAndMsg> = {
   E_400_000: { statusCode: 400, errMessage: '유효하지 않은 요청입니다.' },
+  E_400_001: { statusCode: 400, errMessage: '파일 크기가 0입니다.' },
+  E_400_002: {
+    statusCode: 400,
+    errMessage: '파일 크기가 최대 허용치보다 큽니다.',
+  },
+  E_400_003: { statusCode: 400, errMessage: 'MIME 타입이 유효하지 않습니다.' },
   E_401_000: {
     statusCode: 401,
     errMessage: '유효한 증명 자격이 없습니다.',

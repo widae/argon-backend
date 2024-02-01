@@ -39,11 +39,20 @@ type User {
   """사용자 ID"""
   id: String!
 
-  """이메일 주소"""
-  email: String!
+  """이메일 주소 (화자에게만 노출)"""
+  email: String
 
   """사용자 닉네임"""
   nickname: String!
+
+  """사용자 이미지 URL"""
+  imageUrl: String
+
+  """하는 일"""
+  job: String
+
+  """사용자에 대한 설명"""
+  desc: String
 
   """사용자의 구독 수"""
   numSubs: Int!
@@ -155,6 +164,9 @@ type Query {
   "\n      * 기능\n        - 헬스 체크\n      * 인증\n        - 없음\n    "
   health: Health!
 
+  "\n      * 인증\n        - Bearer (JWT)\n      * 기능\n        - 화자에 대한 읽기\n      * 반환\n        - 사용자 개체\n    "
+  me: User!
+
   "\n      * 기능\n        - 모든 정책 읽기\n      * 인증\n        - 없음\n    "
   policies: [Policy!]!
 
@@ -196,11 +208,17 @@ type Query {
 }
 
 type Mutation {
-  "\n      * 기능\n        - 이메일 & 비밀번호 회원 가입 (사용자 생성)\n      * 인증\n        - 없음\n    "
+  "\n      * 인증\n        - 없음\n      * 기능\n        - 이메일 & 비밀번호 회원 가입 (사용자 생성)\n      * 반환\n        - 로그인 결과 (LogInResult)\n    "
   signUp(input: SignUpInput!): LogInResult!
 
-  "\n      * 기능\n        - 구글 회원 가입 (사용자 생성)\n      * 인증\n        - 없음\n    "
+  "\n      * 인증\n        - 없음\n      * 기능\n        - 구글 회원 가입 (사용자 생성)\n      * 반환\n        - 로그인 결과 (LogInResult)\n    "
   signUpWithGoogle(input: SignUpWithGoogleInput!): LogInResult!
+
+  "\n      * 인증\n        - Bearer (JWT)\n      * 기능\n        - 사용자 수정\n      * 반환\n        - 수정된 개체 수\n    "
+  updateMyself(input: UpdateMyselfInput!): Int!
+
+  "\n      * 인증\n        - Bearer (JWT)\n      * 기능\n        - 사용자 이미지 업로드\n      * 반환\n        - 이미지 URL\n    "
+  uploadUserImage(upload: Upload!): String!
 
   "\n      * 기능\n        - 이메일 인증 생성\n      * 인증\n        - 없음\n    "
   createEmailVerification(input: CreateEmailVerificationInput!): Verification!
@@ -256,6 +274,21 @@ input SignUpWithGoogleInput {
   """동의하는 정책 ID 리스트"""
   policyIds: [String!]!
 }
+
+"""사용자 자신을 수정하기 위한 입력"""
+input UpdateMyselfInput {
+  """사용자 닉네임"""
+  nickname: String!
+
+  """하는 일"""
+  job: String
+
+  """사용자에 대한 설명"""
+  desc: String
+}
+
+"""The `Upload` scalar type represents a file upload."""
+scalar Upload
 
 """이메일 인증 생성을 위한 입력"""
 input CreateEmailVerificationInput {

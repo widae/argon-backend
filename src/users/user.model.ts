@@ -7,6 +7,8 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { LogInType } from './enums/log-in-type.enum';
+import { Expose } from 'class-transformer';
+import { ExposeTo } from '../common/enums/expose-to.enum';
 
 @ObjectType({ description: `사용자` })
 @Entity()
@@ -18,7 +20,11 @@ export class User {
   })
   id: string;
 
-  @Field({ description: `이메일 주소` })
+  @Field(() => String, {
+    nullable: true,
+    description: `이메일 주소 (화자에게만 노출)`,
+  })
+  @Expose({ groups: [ExposeTo.ME] })
   @Column({ unique: true })
   email: string;
 
@@ -34,6 +40,31 @@ export class User {
   @Field({ description: `사용자 닉네임` })
   @Column()
   nickname: string;
+
+  @Column({
+    type: 'varchar',
+    nullable: true,
+  })
+  imageName: string | null;
+
+  @Field(() => String, { nullable: true, description: `사용자 이미지 URL` })
+  imageUrl: string | null;
+
+  @Field(() => String, { nullable: true, description: `하는 일` })
+  @Column({
+    type: 'varchar',
+    length: 32,
+    nullable: true,
+  })
+  job: string | null;
+
+  @Field(() => String, { nullable: true, description: `사용자에 대한 설명` })
+  @Column({
+    type: 'varchar',
+    length: 300,
+    nullable: true,
+  })
+  desc: string | null;
 
   @Field(() => Int, { description: `사용자의 구독 수` })
   @Column({ default: 0 })

@@ -46,6 +46,8 @@ export class EnvVars {
   AWS_SECRET_ACCESS_KEY: string;
   @IsNotEmpty()
   AWS_REGION: string;
+  @IsNotEmpty()
+  AWS_S3_BUCKET: string;
 
   @IsNotEmpty()
   EMAIL_SENDER_ADDR: string;

@@ -2,6 +2,7 @@ import { DataSource, InsertResult, Repository, UpdateResult } from 'typeorm';
 import { DATA_SOURCE, VERIFICATIONS_REPOSITORY } from '../common/constants';
 import { Verification } from './verification.model';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
+import { cleanObj } from '../common/utils/clean-obj.util';
 
 interface CustomRepository {
   insert(
@@ -45,7 +46,7 @@ export const verificationsProviders = [
         ) {
           return await this.createQueryBuilder('verification')
             .update()
-            .set(values)
+            .set(cleanObj(values))
             .where({ id })
             .execute();
         },

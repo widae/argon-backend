@@ -14,6 +14,10 @@ import { jwtDecode } from 'jwt-decode';
 import { User } from './user.model';
 import { LogInType } from './enums/log-in-type.enum';
 import { GoogleIdTokenPayload } from '../google-oauth2/interfaces/google-id-token-payload.interface';
+import { BufferUpload } from '../files/interfaces/buffer-upload.interface';
+import { FilesService } from '../files/files.service';
+import { v4 as uuidv4 } from 'uuid';
+import { UpdateMyselfValues } from './types/update-myself-values.type';
 
 type CreateUserValues = Pick<
   User,
@@ -46,6 +50,7 @@ export class UsersService {
     private readonly agreementsService: AgreementsService,
     private readonly verificationsService: VerificationsService,
     private readonly googleOauth2Service: GoogleOauth2Service,
+    private readonly filesService: FilesService,
     @Inject(USERS_REPOSITORY)
     private readonly usersRepository: UsersRepository,
   ) {}
@@ -139,6 +144,40 @@ export class UsersService {
     return { userId };
   }
 
+  /**
+   * 사용자 자신에 대한 수정
+   *
+   * 참고: -1을 반환할 수 없음
+   *
+   * @param id 사용자 ID
+   * @param values 사용자 자신에 대한 수정을 위한 값들
+   * @return 수정된 개체 수의 프라미스
+   */
+  async updateMyself(id: string, values: UpdateMyselfValues) {
+    const { affected } = await this.usersRepository.updateById(id, values);
+    return affected ?? -1;
+  }
+
+  /**
+   * 사용자 이미지 업로드
+   *
+   * @param id 사용자 ID
+   * @param upload 버퍼 업로드 객체
+   * @return 사용자 이미지 URL 프라미스
+   */
+  async uploadUserImage(id: string, upload: BufferUpload) {
+    /* 파일 생성 */
+    const key = uuidv4();
+
+    await this.filesService.createFile(key, upload);
+
+    /* 사용자 수정 (이미지명 설정) */
+    await this.usersRepository.updateById(id, { imageName: key });
+
+    /* 반환 */
+    return await this.filesService.keyToUrl(key);
+  }
+
   @Transactional({ propagation: Propagation.MANDATORY })
   async onSubscribeOrCancel(
     type: 'SUBSCRIBE' | 'CANCEL',
@@ -176,5 +215,15 @@ export class UsersService {
     await this.usersRepository.updateById(publisher.id, {
       numSubscribers: nextNumSubscribers,
     });
+  }
+
+  /**
+   * 특정 ID의 사용자 읽기
+   *
+   * @param id 사용자 ID
+   * @returns 특정 ID의 사용자 개체 또는 널 프라미스
+   */
+  async getById(id: string) {
+    return await this.usersRepository.getById(id);
   }
 }

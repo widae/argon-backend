@@ -8,6 +8,7 @@ import { VerificationsModule } from '../verifications/verifications.module';
 import { UsersLoader } from './users.loader';
 import { GoogleOauth2Module } from '../google-oauth2/google-oauth2.module';
 import { AuthModule } from '../auth/auth.module';
+import { FilesModule } from '../files/files.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { AuthModule } from '../auth/auth.module';
     VerificationsModule,
     forwardRef(() => AuthModule),
     GoogleOauth2Module,
+    FilesModule,
   ],
   providers: [UsersResolver, UsersService, ...usersProviders, UsersLoader],
   exports: [UsersService, ...usersProviders],

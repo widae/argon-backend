@@ -2,6 +2,7 @@ import { DataSource, InsertResult, Repository, UpdateResult } from 'typeorm';
 import { DATA_SOURCE, USERS_REPOSITORY } from '../common/constants';
 import { User } from './user.model';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
+import { cleanObj } from '../common/utils/clean-obj.util';
 
 interface CustomRepository {
   insert(
@@ -12,6 +13,13 @@ interface CustomRepository {
     id: string,
     values: QueryDeepPartialEntity<User>,
   ): Promise<UpdateResult>;
+  /**
+   * 특정 ID의 사용자 읽기
+   *
+   * @param id 사용자 ID
+   * @returns 특정 ID의 사용자 개체 또는 널 프라미스
+   */
+  getById(id: string): Promise<User | null>;
   getByIdForUpdate(id: string): Promise<User | null>;
   getByEmail(email: string): Promise<User | null>;
   getByIdIn(ids: string[]): Promise<User[]>;
@@ -37,9 +45,12 @@ export const usersProviders = [
         async updateById(id: string, values: QueryDeepPartialEntity<User>) {
           return await this.createQueryBuilder('user')
             .update()
-            .set(values)
+            .set(cleanObj(values))
             .where({ id })
             .execute();
+        },
+        async getById(id: string) {
+          return await this.createQueryBuilder('user').where({ id }).getOne();
         },
         async getByIdForUpdate(id: string) {
           return await this.createQueryBuilder('user')

@@ -19,6 +19,7 @@ import { CompaniesModule } from './companies/companies.module';
 import { SubsModule } from './subs/subs.module';
 import { DataLoadersInterceptor } from './common/interceptors/data-loaders.interceptor';
 import { GoogleOauth2Module } from './google-oauth2/google-oauth2.module';
+import { NullishValuesInterceptor } from './common/interceptors/nullish-values.interceptor';
 
 @Module({
   imports: [
@@ -66,6 +67,7 @@ import { GoogleOauth2Module } from './google-oauth2/google-oauth2.module';
   providers: [
     { provide: APP_PIPE, useClass: ValidationPipe },
     { provide: APP_INTERCEPTOR, useClass: ClassSerializerInterceptor },
+    { provide: APP_INTERCEPTOR, useClass: NullishValuesInterceptor },
     { provide: APP_INTERCEPTOR, useClass: DataLoadersInterceptor },
     { provide: APP_FILTER, useClass: AllExceptionsFilter },
   ],
