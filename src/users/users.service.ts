@@ -18,6 +18,9 @@ import { BufferUpload } from '../files/interfaces/buffer-upload.interface';
 import { FilesService } from '../files/files.service';
 import { v4 as uuidv4 } from 'uuid';
 import { UpdateMyselfValues } from './types/update-myself-values.type';
+import { RedisService } from '@liaoliaots/nestjs-redis';
+import Redis from 'ioredis';
+import { generateRandomInteger } from '../common/utils/generate-random-integer.util';
 
 type CreateUserValues = Pick<
   User,
@@ -46,14 +49,43 @@ interface SignUpWithGoogleResult {
 
 @Injectable()
 export class UsersService {
+  private readonly redis: Redis;
+
   constructor(
     private readonly agreementsService: AgreementsService,
     private readonly verificationsService: VerificationsService,
     private readonly googleOauth2Service: GoogleOauth2Service,
+    private readonly redisService: RedisService,
     private readonly filesService: FilesService,
     @Inject(USERS_REPOSITORY)
     private readonly usersRepository: UsersRepository,
-  ) {}
+  ) {
+    this.redis = this.redisService.getClient();
+  }
+
+  /**
+   * 랜덤 닉네임 생성
+   *
+   * @return 랜덤 닉네임
+   */
+  async generateRandomNickname() {
+    const adjectivesValue = await this.redis.get('nickname-adjectives');
+    const nounsValue = await this.redis.get('nickname-nouns');
+
+    if (adjectivesValue !== null && nounsValue !== null) {
+      const adjectives: string[] = JSON.parse(adjectivesValue);
+      const nouns: string[] = JSON.parse(nounsValue);
+
+      if (adjectives.length > 0 && nouns.length > 0) {
+        const adjective =
+          adjectives[generateRandomInteger(0, adjectives.length - 1)];
+        const noun = nouns[generateRandomInteger(0, nouns.length - 1)];
+        return `${adjective}${noun}`;
+      }
+    }
+
+    throw new Error('랜덤 닉네임 생성을 위한 데이터가 없습니다.');
+  }
 
   @Transactional({ propagation: Propagation.MANDATORY })
   async createUser(values: CreateUserValues): Promise<CreateUserResult> {
@@ -109,11 +141,13 @@ export class UsersService {
       input.verificationCode,
     );
 
+    const nickname = await this.generateRandomNickname();
+
     const { userId } = await this.createUserAndAgreements({
       email: input.email,
       logInType: LogInType.EMAIL_PASSWORD,
       password: input.password,
-      nickname: input.nickname,
+      nickname,
       policyIds: input.policyIds,
     });
 
@@ -132,12 +166,13 @@ export class UsersService {
     }
 
     const { email } = jwtDecode<GoogleIdTokenPayload>(idToken);
+    const nickname = await this.generateRandomNickname();
 
     const { userId } = await this.createUserAndAgreements({
       email,
       logInType: LogInType.GOOGLE,
       password: null,
-      nickname: input.nickname,
+      nickname,
       policyIds: input.policyIds,
     });
 
